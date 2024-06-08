@@ -61,22 +61,18 @@ class LoginFormState extends State<LoginForm> {
             },
           ),
           const SizedBox(height: 16),
-          widget.isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : FilledButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      widget.onSubmit(
-                        _emailController.text,
-                        _passwordController.text,
-                      );
-                    }
-                  },
-                  style: buttonStlye,
-                  child: const Text('Login'),
-                ),
+          FilledButton(
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                widget.onSubmit(
+                  _emailController.text,
+                  _passwordController.text,
+                );
+              }
+            },
+            style: buttonStlye,
+            child: const Text('Login'),
+          ),
           const SizedBox(height: 16),
           TextButton(
             onPressed: () {},

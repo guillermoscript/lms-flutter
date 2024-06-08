@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lms_flutter/screens/dashboard/dashboard.dart';
 import 'package:lms_flutter/screens/login/login_form.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Login extends StatefulWidget {
@@ -23,12 +21,9 @@ class LoginState extends State<Login> {
     });
 
     auth.signInWithPassword(email: email, password: password).then((value) {
-      SharedPreferences.getInstance().then((prefs) {
-        prefs.setString('supabase.auth.token', value.session!.accessToken);
+      setState(() {
+        loading = false;
       });
-
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const Dashboard()));
     }).catchError((e) {
       setState(() {
         error = e.error.message;
