@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lms_flutter/screens/dashboard/dashboard.dart';
 import 'package:lms_flutter/screens/login/login_form.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -21,9 +22,8 @@ class LoginState extends State<Login> {
     });
 
     auth.signInWithPassword(email: email, password: password).then((value) {
-      setState(() {
-        loading = false;
-      });
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => const Dashboard()));
     }).catchError((e) {
       setState(() {
         error = e.error.message;
@@ -54,6 +54,7 @@ class LoginState extends State<Login> {
               Padding(
                 padding: const EdgeInsets.only(top: 26.0),
                 child: LoginForm(
+                  isLoading: loading,
                   onSubmit: _onSubmit,
                 ),
               ),
