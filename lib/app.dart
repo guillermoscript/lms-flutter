@@ -4,7 +4,9 @@ import 'package:lms_flutter/screens/login/login.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class App extends StatelessWidget {
-  const App({super.key});
+  App({super.key});
+
+  final currentSession = Supabase.instance.client.auth.currentSession;
 
   @override
   Widget build(BuildContext context) {
@@ -14,23 +16,7 @@ class App extends StatelessWidget {
         colorScheme: const ColorScheme.light(),
         useMaterial3: true,
       ),
-      home: FutureBuilder(
-          future: Supabase.instance.client.auth.getUser(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Scaffold(
-                body: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            }
-
-            if (snapshot.hasData && snapshot.data != null) {
-              return const Dashboard();
-            }
-
-            return const Login();
-          }),
+      home: currentSession == null ? const Login() : const Dashboard(),
     );
   }
 }

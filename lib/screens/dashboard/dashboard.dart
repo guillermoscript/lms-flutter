@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lms_flutter/screens/dashboard/courses.dart';
+import 'package:lms_flutter/screens/dashboard/courses_card.dart';
 import 'package:lms_flutter/widgets/app_drawer.dart';
 
 class Dashboard extends StatelessWidget {
@@ -16,7 +16,7 @@ class Dashboard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Courses(),
+            CoursesCard(),
           ],
         ),
       ),

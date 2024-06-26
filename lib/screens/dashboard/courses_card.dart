@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:lms_flutter/screens/courses/courses.dart';
 
-class Courses extends StatelessWidget {
-  const Courses({super.key});
+class CoursesCard extends StatelessWidget {
+  const CoursesCard({super.key});
+
+  void goToCourses(BuildContext context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const Courses()));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return const Card.filled(
+    return Card.filled(
       child: Column(
         children: [
-          ListTile(
+          const ListTile(
             title: Text(
               'Courses',
               style: TextStyle(
@@ -20,24 +26,25 @@ class Courses extends StatelessWidget {
           ),
           // Courses link
           ListTile(
-            leading: Icon(Icons.grid_view_outlined, size: 30),
-            title: Text('Courses'),
-            trailing: Icon(Icons.arrow_forward_ios),
+            leading: const Icon(Icons.grid_view_outlined, size: 30),
+            title: const Text('Courses'),
+            trailing: const Icon(Icons.arrow_forward_ios),
+            onTap: () => goToCourses(context),
           ),
           // lesons
-          ListTile(
+          const ListTile(
             leading: Icon(Icons.book_outlined, size: 30),
             title: Text('Lessons'),
             trailing: Icon(Icons.arrow_forward_ios),
           ),
           // tests
-          ListTile(
+          const ListTile(
             leading: Icon(Icons.assignment_outlined, size: 30),
             title: Text('Tests'),
             trailing: Icon(Icons.arrow_forward_ios),
           ),
           // students
-          ListTile(
+          const ListTile(
             leading: Icon(Icons.people_outline, size: 30),
             title: Text('Students'),
             trailing: Icon(Icons.arrow_forward_ios),

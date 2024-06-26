@@ -11,5 +11,5 @@ Future<void> main() async {
     anonKey: Env.supabaseAnonKey,
   );
 
-  runApp(const App());
+  runApp(App());
 }
