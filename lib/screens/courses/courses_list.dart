@@ -32,31 +32,48 @@ class CoursesList extends StatelessWidget {
 
         final data = snapshot.data as List<dynamic>;
 
-        return ListView.builder(
+        return ListView.separated(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
+          separatorBuilder: (context, index) => const SizedBox(
+            height: 12,
+          ),
           itemCount: data.length,
           itemBuilder: (context, index) {
             final course = data[index];
 
-            return ListTile(
-              title: Text(
-                course['title'],
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+            return Badge(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              backgroundColor: Colors.transparent,
+              alignment: Alignment.topLeft,
+              textColor: Theme.of(context).textTheme.bodySmall?.color,
+              label: Text(
+                course['status'],
+              ),
+              child: ListTile(
+                title: Text(
+                  course['title'],
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      course['description'],
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+                trailing: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.more_vert),
+                ),
+                onTap: () => onTabCourse(context, course['course_id']),
               ),
-              subtitle: Text(
-                course['description'],
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.more_vert),
-              ),
-              onTap: () => onTabCourse(context, course['course_id']),
             );
           },
         );
