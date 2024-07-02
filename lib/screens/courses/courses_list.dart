@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:lms_flutter/entities/course.dart';
+import 'package:lms_flutter/providers/course_providers.dart';
 import 'package:lms_flutter/screens/course_view/course_view.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
-class CoursesList extends StatelessWidget {
-  final coursesFuture = Supabase.instance.client.from('courses').select();
+class CoursesList extends HookConsumerWidget {
+  final int courseCount;
+  const CoursesList({super.key, required this.courseCount});
 
-  CoursesList({super.key});
-
-  void onTabCourse(BuildContext context, int courseId) {
+  void onTapCourse(BuildContext context, int courseId) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => CourseView(courseId: courseId),
@@ -16,31 +17,19 @@ class CoursesList extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: coursesFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final response = ref.watch(coursesProvider(0));
 
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-
-        final data = snapshot.data as List<dynamic>;
-
-        return ListView.separated(
+    return switch (response) {
+      AsyncData<List<Course>>(:final value) => ListView.separated(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           separatorBuilder: (context, index) => const SizedBox(
             height: 12,
           ),
-          itemCount: data.length,
+          itemCount: value.length,
           itemBuilder: (context, index) {
-            final course = data[index];
+            final course = value[index];
 
             return Badge(
               padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -48,11 +37,11 @@ class CoursesList extends StatelessWidget {
               alignment: Alignment.topLeft,
               textColor: Theme.of(context).textTheme.bodySmall?.color,
               label: Text(
-                course['status'],
+                course.status,
               ),
               child: ListTile(
                 title: Text(
-                  course['title'],
+                  course.title,
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -62,7 +51,7 @@ class CoursesList extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      course['description'],
+                      course.description,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -72,12 +61,19 @@ class CoursesList extends StatelessWidget {
                   onPressed: () {},
                   icon: const Icon(Icons.more_vert),
                 ),
-                onTap: () => onTabCourse(context, course['course_id']),
+                onTap: () => onTapCourse(context, course.courseId),
               ),
             );
           },
-        );
-      },
-    );
+        ),
+      AsyncError<List<Course>>(:final error) => Center(
+          child: Text(
+            error.toString(),
+          ),
+        ),
+      _ => const Center(
+          child: CircularProgressIndicator(),
+        )
+    };
   }
 }

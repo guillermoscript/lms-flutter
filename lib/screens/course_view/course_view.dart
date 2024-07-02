@@ -1,44 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lms_flutter/entities/course.dart';
+import 'package:lms_flutter/providers/course_providers.dart';
 import 'package:lms_flutter/screens/course_view/course_details.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
-class CourseView extends StatelessWidget {
+class CourseView extends HookConsumerWidget {
   final int courseId;
-  late final PostgrestTransformBuilder<Map<String, dynamic>> courseFuture;
 
-  CourseView({super.key, required this.courseId}) {
-    courseFuture = Supabase.instance.client
-        .from('courses')
-        .select('*, lessons(*), exams(*)')
-        .eq('course_id', courseId)
-        .single();
-  }
+  const CourseView({super.key, required this.courseId});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedIndex = useState(0);
+
+    final course = ref.watch(courseProvider(courseId));
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Course'),
       ),
-      body: FutureBuilder(
-        future: courseFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
-
-          final data = snapshot.data as Map<String, dynamic>;
-          final course = Course.fromJson(data);
-
-          return CourseDetails(course: course);
+      body: switch (course) {
+        AsyncData<Course>(:final value) => CourseDetails(
+            course: value,
+            currentIndex: selectedIndex.value,
+          ),
+        AsyncError(:final error) => Text('Error: $error'),
+        _ => const Center(child: CircularProgressIndicator()),
+      },
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: selectedIndex.value,
+        onTap: (index) {
+          selectedIndex.value = index;
         },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.class_),
+            label: 'Lessons',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.edit_document),
+            label: 'Tests',
+          ),
+        ],
       ),
     );
   }

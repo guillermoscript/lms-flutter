@@ -38,6 +38,12 @@ class LessonItem extends StatelessWidget {
           ),
         ),
         subtitle: lesson.description != null ? Text(lesson.description!) : null,
+        leading: Text(
+          lesson.sequence.toString(),
+          style: TextStyle(
+            color: theme.colorScheme.onSurface.withOpacity(0.5),
+          ),
+        ),
       ),
     );
   }

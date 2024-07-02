@@ -4,6 +4,7 @@ class Course {
   final String description;
   final List<Lesson> lessons;
   final List<Exam> exams;
+  final String status;
 
   Course({
     required this.courseId,
@@ -11,6 +12,7 @@ class Course {
     required this.description,
     required this.lessons,
     required this.exams,
+    required this.status,
   });
 
   factory Course.fromJson(Map<String, dynamic> json) {
@@ -18,12 +20,17 @@ class Course {
       courseId: json['course_id'] as int,
       title: json['title'] as String,
       description: json['description'] as String,
-      lessons: (json['lessons'] as List<dynamic>)
-          .map((e) => Lesson.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      exams: (json['exams'] as List<dynamic>)
-          .map((e) => Exam.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      status: json['status'] as String,
+      lessons: json['lessons'] != null
+          ? (json['lessons'] as List<dynamic>)
+              .map((e) => Lesson.fromJson(e as Map<String, dynamic>))
+              .toList()
+          : List<Lesson>.empty(),
+      exams: json['exams'] != null
+          ? (json['exams'] as List<dynamic>)
+              .map((e) => Exam.fromJson(e as Map<String, dynamic>))
+              .toList()
+          : List<Exam>.empty(),
     );
   }
 }
